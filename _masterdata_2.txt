@@ -1,0 +1,38 @@
+
+        <div className="table-container" style={{ border: 'none', boxShadow: 'none' }}>
+          <table className="custom-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                {isDept && <th>Code</th>}
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr><td colSpan={isDept ? 5 : 4} style={{ textAlign: 'center', padding: '30px' }}>Loading master data...</td></tr>
+              ) : items.length === 0 ? (
+                <tr><td colSpan={isDept ? 5 : 4} style={{ textAlign: 'center', padding: '30px', color: '#64748b' }}>No records found.</td></tr>
+              ) : (
+                items.map(it => (
+                  <tr key={it.id}>
+                    <td><b>{it.name}</b></td>
+                    {isDept && <td>{it.code || <span style={{ color: '#94a3b8' }}>—</span>}</td>}
+                    <td>{it.description || <span style={{ color: '#94a3b8' }}>—</span>}</td>
+                    <td>{it.active ? <span style={{ color: 'var(--success)', fontWeight: 700 }}>Active</span> : <span style={{ color: 'var(--danger)', fontWeight: 700 }}>Inactive</span>}</td>
+                    <td>
+                      <button className="btn-secondary" style={{ padding: '4px 8px', fontSize: '12px', marginRight: '4px' }} onClick={() => startEdit(it)}>Edit</button>
+                      <button className="btn-secondary" style={{ padding: '4px 8px', fontSize: '12px', color: 'var(--danger)', borderColor: 'var(--danger-border)' }} onClick={() => remove(it.id)}>Remove</button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}

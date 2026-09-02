@@ -1,0 +1,118 @@
+// ================= MASTER DATA MANAGEMENT VIEW =================
+function MasterData() {
+  const [tab, setTab] = useState('departments');
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [msg, setMsg] = useState('');
+  const [editId, setEditId] = useState(null);
+  const [form, setForm] = useState({});
+
+  const isDept = tab === 'departments';
+  const entity = isDept ? 'Department' : 'Purpose';
+
+  const resetForm = () => setForm(isDept ? { name: '', code: '', description: '', active: true } : { name: '', description: '', active: true });
+
+  const load = () => {
+    setLoading(true);
+    api(`/master/${tab}/all`)
+      .then(setItems)
+      .catch(() => setItems([]))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { resetForm(); load(); setEditId(null); }, [tab]);
+
+  const setField = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+
+  const toBody = () => isDept
+    ? { name: form.name, code: form.code, description: form.description, active: form.active }
+    : { name: form.name, description: form.description, active: form.active };
+
+  const submitAdd = async (e) => {
+    e.preventDefault();
+    if (!form.name) return setMsg('Name is required');
+    try {
+      await api(`/master/${tab}`, { method: 'POST', body: JSON.stringify(toBody()) });
+      setMsg(`${entity} added`);
+      resetForm();
+      load();
+    } catch (err) { setMsg('Error: ' + err.message); }
+  };
+
+  const startEdit = (item) => {
+    setEditId(item.id);
+    setForm(isDept ? { name: item.name, code: item.code || '', description: item.description || '', active: !!item.active } : { name: item.name, description: item.description || '', active: !!item.active });
+  };
+
+  const saveEdit = async () => {
+    if (!form.name) return setMsg('Name is required');
+    try {
+      await api(`/master/${tab}/${editId}`, { method: 'PUT', body: JSON.stringify(toBody()) });
+      setMsg(`${entity} updated`);
+      setEditId(null);
+      resetForm();
+      load();
+    } catch (err) { setMsg('Error: ' + err.message); }
+  };
+
+  const remove = async (id) => {
+    if (!confirm(`Remove this ${entity.toLowerCase()}?`)) return;
+    try {
+      await api(`/master/${tab}/${id}`, { method: 'DELETE' });
+      setMsg(`${entity} removed`);
+      load();
+    } catch (err) { setMsg('Error: ' + err.message); }
+  };
+
+  return (
+    <div className="panel">
+      <div className="panel-header">
+        <h3 className="panel-title">
+          <Icons.MasterData /> Master Data Management
+        </h3>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button className={`nav-item ${tab === 'departments' ? 'active' : ''}`} style={{ height: '32px', padding: '0 12px', fontSize: '13px' }} onClick={() => setTab('departments')}>Departments</button>
+          <button className={`nav-item ${tab === 'purposes' ? 'active' : ''}`} style={{ height: '32px', padding: '0 12px', fontSize: '13px' }} onClick={() => setTab('purposes')}>Visit Purposes</button>
+        </div>
+      </div>
+
+      <div className="panel-body">
+        {msg && <div className={`alert-box ${msg.startsWith('Error') ? 'alert-error' : 'alert-success'}`}><strong>{msg}</strong></div>}
+
+        <div className="panel" style={{ marginBottom: '16px' }}>
+          <div className="panel-header">
+            <h4 style={{ margin: 0 }}>{editId ? `Edit ${entity}` : `Add New ${entity}`}</h4>
+          </div>
+          <div className="panel-body">
+            <form onSubmit={submitAdd} className="form-grid">
+              <div className="form-group">
+                <label className="form-label">{entity} Name <span className="req">*</span></label>
+                <input className="form-control" placeholder={isDept ? 'e.g. IT, Operations' : 'e.g. Client Meeting, Audit'} value={form.name || ''} onChange={e => setField('name', e.target.value)} required />
+              </div>
+              {isDept && (
+                <div className="form-group">
+                  <label className="form-label">Code (Short)</label>
+                  <input className="form-control" placeholder="e.g. IT, OPS" value={form.code || ''} onChange={e => setField('code', e.target.value)} />
+                </div>
+              )}
+              <div className="form-group">
+                <label className="form-label">Description</label>
+                <input className="form-control" placeholder="Optional description" value={form.description || ''} onChange={e => setField('description', e.target.value)} />
+              </div>
+              <div className="form-group full-width" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox" checked={form.active !== false} onChange={e => setField('active', e.target.checked)} />
+                <label className="checkbox-label" style={{ marginBottom: 0 }}>Active (visible in forms)</label>
+              </div>
+              <div className="form-group full-width">
+                {editId ? (
+                  <>
+                    <button type="button" className="btn-primary" onClick={saveEdit}>Save Changes</button>
+                    <button type="button" className="btn-secondary" style={{ marginLeft: '8px' }} onClick={() => { setEditId(null); resetForm(); }}>Cancel</button>
+                  </>
+                ) : (
+                  <button type="submit" className="btn-primary">Add {entity}</button>
+                )}
+              </div>
+            </form>
+          </div>
+        </div>
