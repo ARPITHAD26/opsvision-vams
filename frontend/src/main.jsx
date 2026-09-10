@@ -2,7 +2,7 @@
 import { createRoot } from 'react-dom/client';
 import './style.css';
 
-const API = 'http://localhost:8000/api';
+const API = '/api';
 
 async function api(path, opt = {}) {
   const token = localStorage.getItem('token');
