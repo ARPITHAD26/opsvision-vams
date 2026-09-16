@@ -86,6 +86,16 @@ const Icons = {
     <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
     </svg>
+  ),
+  Menu: () => (
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>
+  ),
+  Close: () => (
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
   )
 };
 
@@ -452,6 +462,7 @@ function Shell({ user, setUser, logout }) {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showWebapkModal, setShowWebapkModal] = useState(false);
   const [showSmtpModal, setShowSmtpModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const lastNotifCountRef = useRef(0);
 
   useEffect(() => {
@@ -553,21 +564,6 @@ function Shell({ user, setUser, logout }) {
     }
   };
 
-  // Quick switch roles directly from top bar
-  const switchRole = async (targetUser) => {
-    try {
-      const d = await api('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ username: targetUser, password: targetUser + '123' })
-      });
-      localStorage.setItem('token', d.token);
-      localStorage.setItem('user', JSON.stringify(d.user));
-      setUser(d.user);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Icons.Dashboard },
     { id: 'register', label: 'Visitor Registration', icon: Icons.Register, roles: ['ADMIN', 'GUARD', 'RECEPTION'] },
@@ -582,6 +578,11 @@ function Shell({ user, setUser, logout }) {
 
   return (
     <div className="app-container">
+      {/* Mobile Drawer Backdrop */}
+      {mobileMenuOpen && (
+        <div className="sidebar-backdrop" onClick={() => setMobileMenuOpen(false)}></div>
+      )}
+
       {/* Live Toast Alert Banner */}
       {toastAlert && (
         <div className="vams-toast-alert" onClick={() => setToastAlert(null)}>
@@ -594,13 +595,16 @@ function Shell({ user, setUser, logout }) {
       )}
 
       {/* ================= LEFT SIDEBAR ================= */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
         <div className="sidebar-brand">
           <img src="/logo.png" alt="OpsVision VAMS Logo" className="sidebar-logo-img" />
           <div className="brand-text">
             <h1>OpsVision <span>VAMS</span></h1>
             <p>Access Management</p>
           </div>
+          <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)} title="Close Menu">
+            <Icons.Close />
+          </button>
         </div>
 
         <div className="sidebar-nav-container">
@@ -612,7 +616,10 @@ function Shell({ user, setUser, logout }) {
               <button
                 key={item.id}
                 className={`nav-item ${isActive ? 'active' : ''}`}
-                onClick={() => setTab(item.id)}
+                onClick={() => {
+                  setTab(item.id);
+                  setMobileMenuOpen(false);
+                }}
               >
                 <Icon />
                 <span>{item.label}</span>
@@ -643,18 +650,19 @@ function Shell({ user, setUser, logout }) {
       <div className="main-wrapper">
         <header className="top-header">
           <div className="header-left">
+            <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} title="Toggle Navigation">
+              <Icons.Menu />
+            </button>
             <h2 className="page-heading">{currentNav.label}</h2>
-            <div className="system-status-pill">
-              <span className="status-dot"></span>
-              Live System Active
-            </div>
           </div>
 
           <div className="header-right">
-            {/* Download WebAPK Button */}
-            <button className="btn-webapk" onClick={() => setShowWebapkModal(true)}>
-              <Icons.DownloadApp /> Download WebAPK
-            </button>
+            {/* Download WebAPK Button - Admin Only */}
+            {user.role === 'ADMIN' && (
+              <button className="btn-webapk" onClick={() => setShowWebapkModal(true)} title="Download Android WebAPK Native Package">
+                <Icons.DownloadApp /> Download WebAPK
+              </button>
+            )}
 
             {/* Notification Bell Dropdown */}
             <div className="nav-actions">
@@ -696,27 +704,15 @@ function Shell({ user, setUser, logout }) {
               )}
             </div>
 
-            {/* SMTP Settings Button for Admin */}
+            {/* SMTP Settings Button - Admin Only */}
             {user.role === 'ADMIN' && (
               <button className="btn-secondary" onClick={() => setShowSmtpModal(true)} title="Email SMTP Settings" style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px' }}>
                 <Icons.Mail /> SMTP
               </button>
             )}
 
-            <div className="role-switcher">
-              <span className="role-switch-label">Role:</span>
-              {['admin', 'guard', 'reception', 'employee'].map(r => (
-                <button
-                  key={r}
-                  className={`role-btn ${user.username === r ? 'active' : ''}`}
-                  onClick={() => switchRole(r)}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
             <div className="clock-badge">{currentTime}</div>
-            <button className="btn-secondary theme-toggle-btn" onClick={toggleTheme} style={{ marginLeft: '8px' }}>
+            <button className="btn-secondary theme-toggle-btn" onClick={toggleTheme} style={{ marginLeft: '4px' }} title="Toggle Theme">
               {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
             </button>
           </div>
@@ -1030,6 +1026,7 @@ function Register({ setTab, viewPass }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (!/^\d{10}$/.test(form.mobile || '')) {
       setMsg('Error: Mobile number must be exactly 10 digits');
       return;

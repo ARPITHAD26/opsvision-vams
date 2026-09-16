@@ -376,6 +376,16 @@ app.post('/api/visitors/register', auth, roles('GUARD', 'RECEPTION', 'ADMIN'), a
   if (new Date(expected_checkout) <= new Date(expected_checkin)) return res.status(400).json({ message: 'Check-out time must be later than check-in time' });
 
   const cleanMobile = String(mobile).trim();
+
+  // Check for duplicate rapid submission (within 15 seconds)
+  const recent = db.prepare(`SELECT x.id visitId, x.visitor_code visitorCode, v.id, v.otp 
+    FROM visitors v JOIN visits x ON x.visitor_id=v.id 
+    WHERE v.mobile=? AND v.name=? AND datetime(x.created_at) >= datetime('now', '-15 seconds') 
+    ORDER BY x.id DESC LIMIT 1`).get(cleanMobile, name);
+  if (recent) {
+    return res.json({ message: 'Visitor registered successfully! Demo OTP and Pass Code generated.', ...recent, otpDemo: true });
+  }
+
   const otp = String(Math.floor(100000 + Math.random() * 900000));
   const tx = db.transaction(() => {
     const r = db.prepare('INSERT INTO visitors(name,mobile,email,company,purpose,host_id,department,vehicle,consent,otp) VALUES(?,?,?,?,?,?,?,?,?,?)').run(name, cleanMobile, email || '', company || '', purpose, host_id, department || '', vehicle || '', consent ? 1 : 0, otp);
