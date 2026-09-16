@@ -1426,7 +1426,7 @@ function Visitors({ user, viewPass }) {
           <button className="btn-primary" onClick={load}>Search</button>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           {['', 'INSIDE', 'APPROVED', 'PENDING_APPROVAL', 'CLOSED'].map(s => (
             <button
               key={s}
@@ -2105,7 +2105,7 @@ function Reports() {
 
       {/* ---- Charts Tab ---- */}
       {activeTab === 'charts' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
           {/* Status Distribution Pie Chart */}
           <div className="panel">
             <div className="panel-header">
@@ -2342,7 +2342,7 @@ function MasterData() {
         <h3 className="panel-title">
           <Icons.MasterData /> Master Data Management
         </h3>
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
           <button className={`nav-item ${tab === 'departments' ? 'active' : ''}`} style={{ height: '32px', padding: '0 12px', fontSize: '13px' }} onClick={() => setTab('departments')}>Departments</button>
           <button className={`nav-item ${tab === 'purposes' ? 'active' : ''}`} style={{ height: '32px', padding: '0 12px', fontSize: '13px' }} onClick={() => setTab('purposes')}>Visit Purposes</button>
           <button className={`nav-item ${tab === 'hosts' ? 'active' : ''}`} style={{ height: '32px', padding: '0 12px', fontSize: '13px' }} onClick={() => setTab('hosts')}>People to Meet (Hosts)</button>
