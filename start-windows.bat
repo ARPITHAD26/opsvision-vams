@@ -1,4 +1,4 @@
 @echo off
-start "VAMS Backend" cmd /k "cd /d %~dp0backend && npm install && npm run dev"
+start "OpsVision VAMS Backend" cmd /k "cd /d %~dp0backend && npm start"
 timeout /t 2 >nul
-start "VAMS Frontend" cmd /k "cd /d %~dp0frontend && npm install && npm run dev"
+start "OpsVision VAMS Frontend" cmd /k "cd /d %~dp0frontend && npm run dev"

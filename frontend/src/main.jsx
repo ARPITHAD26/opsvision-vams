@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
 
@@ -70,6 +70,21 @@ const Icons = {
     <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
       <rect x="4.25" y="6.5" width="15.5" height="11" rx="2" />
       <path strokeLinecap="round" strokeLinejoin="round" d="M5.75 10.5h12.5M5.75 14.5h12.5" />
+    </svg>
+  ),
+  Bell: () => (
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+    </svg>
+  ),
+  DownloadApp: () => (
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+    </svg>
+  ),
+  Mail: () => (
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
     </svg>
   )
 };
@@ -266,16 +281,184 @@ function App() {
   );
 }
 
+// WebAPK / PWA Installation Modal
+function WebapkModal({ onClose, deferredPrompt }) {
+  const installPwa = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      console.log('WebAPK User Choice:', choice.outcome);
+      if (choice.outcome === 'accepted') {
+        alert('WebAPK is installing into your Android Apps Screen (App Drawer)!');
+      }
+      onClose();
+    } else {
+      alert('To install WebAPK into your Android Apps Screen (App Drawer):\n\n1. Tap Chrome menu (⋮) at top right\n2. Tap "Install App" or "Add to Home Screen"\n3. Android will automatically package and install the native WebAPK into your Apps Drawer!');
+    }
+  };
+
+  const downloadApkPackage = () => {
+    // Generates/opens WebAPK package link or PWABuilder Android APK builder
+    const pwaUrl = encodeURIComponent(window.location.origin);
+    window.open(`https://www.pwabuilder.com/url?url=${pwaUrl}`, '_blank');
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="webapk-modal-card" onClick={e => e.stopPropagation()}>
+        <div className="webapk-hero-box">
+          <span className="webapk-badge-pill">Android WebAPK Native Package</span>
+          <h2 style={{ margin: '0 0 8px 0', fontSize: '22px' }}>Install OpsVision VAMS WebAPK</h2>
+          <p style={{ margin: 0, opacity: 0.95, fontSize: '13px' }}>
+            Installs as a native app directly in your <strong>Android Apps Screen (App Drawer)</strong> with system notification support.
+          </p>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-card-subtle)', padding: '12px 16px', borderRadius: '10px' }}>
+            <span style={{ fontSize: '24px' }}>📱</span>
+            <div>
+              <div style={{ fontWeight: '700', fontSize: '13px' }}>App Drawer & Apps Screen Integration</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Listed alongside native apps in Android Settings & Apps Drawer</div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-card-subtle)', padding: '12px 16px', borderRadius: '10px' }}>
+            <span style={{ fontSize: '24px' }}>🔔</span>
+            <div>
+              <div style={{ fontWeight: '700', fontSize: '13px' }}>Native Push & Arrival Notifications</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Instant visitor check-in alerts delivered directly to your device</div>
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <button className="btn-webapk" style={{ justifyContent: 'center', padding: '12px', fontSize: '14px' }} onClick={installPwa}>
+            <Icons.DownloadApp /> Install WebAPK (App Drawer)
+          </button>
+          <button className="btn-secondary" style={{ padding: '10px', fontSize: '13px' }} onClick={downloadApkPackage}>
+            📦 Build / Download Standalone .APK Package
+          </button>
+          <button className="btn-secondary" style={{ padding: '8px' }} onClick={onClose}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Google Workspace SMTP Settings Modal
+function SmtpSettingsModal({ onClose }) {
+  const [form, setForm] = useState({ host: 'smtp.gmail.com', port: 465, secure: true, user: '', pass: '', from: '' });
+  const [loading, setLoading] = useState(true);
+  const [msg, setMsg] = useState('');
+  const [testing, setTesting] = useState(false);
+
+  useEffect(() => {
+    api('/admin/smtp-settings')
+      .then(data => {
+        setForm({
+          host: data.host || 'smtp.gmail.com',
+          port: data.port || 465,
+          secure: data.secure !== false,
+          user: data.user || '',
+          pass: data.pass || '',
+          from: data.from || ''
+        });
+      })
+      .catch(e => setMsg('Error loading SMTP settings: ' + e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const saveSettings = async (e) => {
+    e.preventDefault();
+    setMsg('');
+    try {
+      await api('/admin/smtp-settings', {
+        method: 'POST',
+        body: JSON.stringify(form)
+      });
+      setMsg('SMTP settings saved successfully!');
+    } catch(err) {
+      setMsg('Error saving SMTP: ' + err.message);
+    }
+  };
+
+  const testEmail = async () => {
+    setTesting(true); setMsg('');
+    try {
+      const res = await api('/admin/test-email', { method: 'POST', body: JSON.stringify({}) });
+      setMsg(res.message);
+    } catch(err) {
+      setMsg('Error: ' + err.message);
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="pass-card" style={{ maxWidth: '580px' }} onClick={e => e.stopPropagation()}>
+        <div className="pass-header" style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)' }}>
+          <h3>Google Workspace SMTP Configuration</h3>
+          <p>Hostinger VPS Visitor & Host Email Dispatch Credentials</p>
+        </div>
+        <div className="pass-body">
+          {msg && <div className={`alert-box ${msg.startsWith('Error') ? 'alert-error' : 'alert-success'}`}><strong>{msg}</strong></div>}
+          {loading ? <div>Loading settings...</div> : (
+            <form onSubmit={saveSettings} className="form-grid">
+              <div className="form-group">
+                <label className="form-label">SMTP Host</label>
+                <input className="form-control" value={form.host} onChange={e => setForm({...form, host: e.target.value})} placeholder="smtp.gmail.com" required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Port</label>
+                <input className="form-control" type="number" value={form.port} onChange={e => setForm({...form, port: Number(e.target.value)})} placeholder="465 or 587" required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Google Workspace Email <span className="req">*</span></label>
+                <input className="form-control" type="email" value={form.user} onChange={e => setForm({...form, user: e.target.value})} placeholder="notifications@yourcompany.com" required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Google App Password (16 chars) <span className="req">*</span></label>
+                <input className="form-control" type="password" value={form.pass} onChange={e => setForm({...form, pass: e.target.value})} placeholder="App password from Google Security" required />
+              </div>
+              <div className="form-group full-width">
+                <label className="form-label">Sender From Header</label>
+                <input className="form-control" value={form.from} onChange={e => setForm({...form, from: e.target.value})} placeholder='"OpsVision VAMS" <notifications@yourcompany.com>' />
+              </div>
+              <div className="form-group full-width" style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button type="submit" className="btn-primary" style={{ flex: 1 }}>Save Settings</button>
+                <button type="button" className="btn-secondary" disabled={testing} onClick={testEmail}>
+                  {testing ? 'Sending...' : '🧪 Send Test Email'}
+                </button>
+                <button type="button" className="btn-secondary" onClick={onClose}>Close</button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Shell({ user, setUser, logout }) {
   const [tab, setTab] = useState('dashboard');
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const [passData, setPassData] = useState(null);
   const [pendingCount, setPendingCount] = useState(0);
 
+  // App Notifications & WebAPK state
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const [toastAlert, setToastAlert] = useState(null);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showWebapkModal, setShowWebapkModal] = useState(false);
+  const [showSmtpModal, setShowSmtpModal] = useState(false);
+  const lastNotifCountRef = useRef(0);
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
     return () => clearInterval(timer);
   }, []);
+
   // Theme handling (light/dark mode)
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   useEffect(() => {
@@ -285,6 +468,54 @@ function Shell({ user, setUser, logout }) {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
+  };
+
+  // Audio alert chime
+  const playAlertSound = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.3);
+    } catch(e) {}
+  };
+
+  // PWA beforeinstallprompt listener
+  useEffect(() => {
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  // Poll Notifications & Approvals
+  const fetchNotifications = () => {
+    api('/notifications')
+      .then(res => {
+        setNotifications(res.notifications || []);
+        const unread = res.unreadCount || 0;
+        if (unread > lastNotifCountRef.current && lastNotifCountRef.current !== 0) {
+          playAlertSound();
+          const newest = (res.notifications || [])[0];
+          if (newest) {
+            setToastAlert(newest);
+            setTimeout(() => setToastAlert(null), 6000);
+          }
+        }
+        lastNotifCountRef.current = unread;
+        setUnreadCount(unread);
+      })
+      .catch(() => {});
   };
 
   const refreshPending = () => {
@@ -298,9 +529,20 @@ function Shell({ user, setUser, logout }) {
 
   useEffect(() => {
     refreshPending();
-    const interval = setInterval(refreshPending, 10000);
+    fetchNotifications();
+    const interval = setInterval(() => {
+      refreshPending();
+      fetchNotifications();
+    }, 5000);
     return () => clearInterval(interval);
   }, [user]);
+
+  const markAllNotifsRead = async () => {
+    try {
+      await api('/notifications/read-all', { method: 'PUT' });
+      fetchNotifications();
+    } catch(e) {}
+  };
 
   const viewPass = async (visitId) => {
     try {
@@ -340,6 +582,17 @@ function Shell({ user, setUser, logout }) {
 
   return (
     <div className="app-container">
+      {/* Live Toast Alert Banner */}
+      {toastAlert && (
+        <div className="vams-toast-alert" onClick={() => setToastAlert(null)}>
+          <span className="vams-toast-icon">🔔</span>
+          <div className="vams-toast-content">
+            <strong>{toastAlert.title}</strong>
+            <p>{toastAlert.message}</p>
+          </div>
+        </div>
+      )}
+
       {/* ================= LEFT SIDEBAR ================= */}
       <aside className="sidebar">
         <div className="sidebar-brand">
@@ -398,6 +651,58 @@ function Shell({ user, setUser, logout }) {
           </div>
 
           <div className="header-right">
+            {/* Download WebAPK Button */}
+            <button className="btn-webapk" onClick={() => setShowWebapkModal(true)}>
+              <Icons.DownloadApp /> Download WebAPK
+            </button>
+
+            {/* Notification Bell Dropdown */}
+            <div className="nav-actions">
+              <button className="notification-bell-btn" onClick={() => setShowNotifDropdown(!showNotifDropdown)} title="Notifications">
+                <Icons.Bell />
+                {unreadCount > 0 && <span className="notification-unread-badge">{unreadCount}</span>}
+              </button>
+
+              {showNotifDropdown && (
+                <div className="notification-dropdown">
+                  <div className="notification-header">
+                    <h4>Notifications ({unreadCount} new)</h4>
+                    {unreadCount > 0 && (
+                      <button className="btn-secondary" style={{ padding: '2px 8px', fontSize: '11px' }} onClick={markAllNotifsRead}>
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+                  <div className="notification-list">
+                    {notifications.length === 0 ? (
+                      <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
+                        No notifications yet.
+                      </div>
+                    ) : (
+                      notifications.map(n => (
+                        <div key={n.id} className={`notification-item ${!n.read ? 'unread' : ''}`} onClick={() => {
+                          if (n.type === 'VISITOR_REGISTERED') setTab('approvals');
+                          else if (n.type === 'VISITOR_ENTRY') setTab('visitors');
+                          setShowNotifDropdown(false);
+                        }}>
+                          <span className="notif-title">{n.title}</span>
+                          <span className="notif-msg">{n.message}</span>
+                          <span className="notif-time">{new Date(n.created_at).toLocaleTimeString()}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* SMTP Settings Button for Admin */}
+            {user.role === 'ADMIN' && (
+              <button className="btn-secondary" onClick={() => setShowSmtpModal(true)} title="Email SMTP Settings" style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 12px' }}>
+                <Icons.Mail /> SMTP
+              </button>
+            )}
+
             <div className="role-switcher">
               <span className="role-switch-label">Role:</span>
               {['admin', 'guard', 'reception', 'employee'].map(r => (
@@ -429,9 +734,12 @@ function Shell({ user, setUser, logout }) {
       </div>
 
       <PassModal passData={passData} onClose={() => setPassData(null)} />
+      {showWebapkModal && <WebapkModal onClose={() => setShowWebapkModal(false)} deferredPrompt={deferredPrompt} />}
+      {showSmtpModal && <SmtpSettingsModal onClose={() => setShowSmtpModal(false)} />}
     </div>
   );
 }
+
 
 // ================= UPGRADED DASHBOARD VIEW =================
 function Dashboard({ user, setTab, viewPass }) {
