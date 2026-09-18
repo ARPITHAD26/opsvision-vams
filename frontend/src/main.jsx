@@ -1285,7 +1285,7 @@ function Register({ setTab, viewPass }) {
 
           <div className="form-group full-width" style={{ marginTop: '10px' }}>
             <button type="submit" className="btn-primary" disabled={loading}>
-              {loading ? 'Registering...' : 'Register Visitor & Generate Access Pass'}
+              {loading ? 'Registering...' : 'Submit'}
             </button>
           </div>
         </form>
