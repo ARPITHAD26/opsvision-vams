@@ -1119,7 +1119,7 @@ function Register({ setTab, viewPass }) {
             <input
               required
               className="form-control"
-              placeholder="e.g. John Doe"
+              placeholder="e.g. Ramesh Kumar"
               onChange={e => setField('name', e.target.value)}
             />
           </div>
@@ -1150,7 +1150,7 @@ function Register({ setTab, viewPass }) {
             <input
               type="email"
               className="form-control"
-              placeholder="e.g. john@company.com"
+              placeholder="e.g. spoorthy@company.com"
               onChange={e => setField('email', e.target.value)}
             />
           </div>
@@ -1159,7 +1159,7 @@ function Register({ setTab, viewPass }) {
             <label className="form-label">Company / Organization</label>
             <input
               className="form-control"
-              placeholder="e.g. Acme Corp"
+              placeholder="e.g. Spandana Technologies"
               onChange={e => setField('company', e.target.value)}
             />
           </div>
@@ -1267,7 +1267,7 @@ function Register({ setTab, viewPass }) {
             <label className="form-label">Vehicle Registration (Optional)</label>
             <input
               className="form-control"
-              placeholder="e.g. MH-02-AB-1234"
+              placeholder="e.g. KA-02-AB-1234"
               onChange={e => setField('vehicle', e.target.value)}
             />
           </div>
