@@ -602,10 +602,9 @@ function Shell({ user, setUser, logout }) {
       {/* ================= LEFT SIDEBAR ================= */}
       <aside className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
         <div className="sidebar-brand">
-          <img src="/logo.png" alt="OpsVision VAMS Logo" className="sidebar-logo-img" />
+          <img src="/logo.png" alt="Swagatham Logo" className="sidebar-logo-img" />
           <div className="brand-text">
-            <h1>OpsVision <span>VAMS</span></h1>
-            <p>Access Management</p>
+            <h1>Swagatham</h1>
           </div>
           <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)} title="Close Menu">
             <Icons.Close />
