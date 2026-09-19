@@ -963,7 +963,7 @@ function Dashboard({ user, setTab, viewPass }) {
                   <div className="step-num">3</div>
                   <div className="step-info">
                     <h4>Exit & Audit Logging</h4>
-                    <p>Checkout timestamped with audit compliance</p>
+                    <p>stamped with audit compliance</p>
                   </div>
                 </div>
               </div>
@@ -1255,7 +1255,7 @@ function Register({ setTab, viewPass }) {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Expected Check-in Time <span className="req">*</span></label>
+            <label className="form-label">Check-in Time <span className="req">*</span></label>
             <input
               required
               type="datetime-local"
@@ -1266,7 +1266,7 @@ function Register({ setTab, viewPass }) {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Expected Check-out Time <span className="req">*</span></label>
+            <label className="form-label"> Check-out Time <span className="req">*</span></label>
             <input
               required
               type="datetime-local"
