@@ -64,12 +64,12 @@ const Icons = {
   Logout: () => (
     <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-        </svg>
+    </svg>
   ),
   Blocked: () => (
     <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 11.293V12.5a2.5 2.5 0 006.88-3.363A3.625 3.625 0 0113 19.375H17m0 0l1.5 1.5m-11.25-5.25v2.25a1.5 1.5 0 013 3h-3M15 11.293v-.667a3 3 0 01-3 0l8.25-1.5.375-.375a1.5 1.5 0 013 0l-7.5 4.5M16 11.293v.667a3 3 0 016 0l8.25 1.5.375.375a1.5 1.5 0 01-3 0l-7.5-4.5" />
-        </svg>
+    </svg>
   ),
   MasterData: () => (
     <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
@@ -125,7 +125,8 @@ function PassModal({ passData, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="pass-card" onClick={e => e.stopPropagation()}>
         <div className="pass-header">
-          <h3>OpsVision Visitor Pass</h3>
+          <img src="/logo.png" alt="Swagatham Logo" className="pass-header-logo" />
+          <h3>Swagatham Visitor Pass</h3>
           <p>Digital Security Badge</p>
         </div>
         <div className="pass-body">
@@ -218,7 +219,7 @@ function Login({ onLogin }) {
       <div className="login-card">
         <div className="login-brand">
           <div className="login-logo-box">
-            <img src="/logo.png" alt="OpsVision VAMS Logo" className="login-logo-img" />
+            <img src="/logo.png" alt="Swagatham Logo" className="login-logo-img" />
           </div>
           <p>Enterprise Visitor Access Management System</p>
         </div>
@@ -390,7 +391,7 @@ function SmtpSettingsModal({ onClose }) {
         body: JSON.stringify(form)
       });
       setMsg('SMTP settings saved successfully!');
-    } catch(err) {
+    } catch (err) {
       setMsg('Error saving SMTP: ' + err.message);
     }
   };
@@ -400,7 +401,7 @@ function SmtpSettingsModal({ onClose }) {
     try {
       const res = await api('/admin/test-email', { method: 'POST', body: JSON.stringify({}) });
       setMsg(res.message);
-    } catch(err) {
+    } catch (err) {
       setMsg('Error: ' + err.message);
     } finally {
       setTesting(false);
@@ -420,23 +421,23 @@ function SmtpSettingsModal({ onClose }) {
             <form onSubmit={saveSettings} className="form-grid">
               <div className="form-group">
                 <label className="form-label">SMTP Host</label>
-                <input className="form-control" value={form.host} onChange={e => setForm({...form, host: e.target.value})} placeholder="smtp.gmail.com" required />
+                <input className="form-control" value={form.host} onChange={e => setForm({ ...form, host: e.target.value })} placeholder="smtp.gmail.com" required />
               </div>
               <div className="form-group">
                 <label className="form-label">Port</label>
-                <input className="form-control" type="number" value={form.port} onChange={e => setForm({...form, port: Number(e.target.value)})} placeholder="465 or 587" required />
+                <input className="form-control" type="number" value={form.port} onChange={e => setForm({ ...form, port: Number(e.target.value) })} placeholder="465 or 587" required />
               </div>
               <div className="form-group">
                 <label className="form-label">Google Workspace Email <span className="req">*</span></label>
-                <input className="form-control" type="email" value={form.user} onChange={e => setForm({...form, user: e.target.value})} placeholder="notifications@yourcompany.com" required />
+                <input className="form-control" type="email" value={form.user} onChange={e => setForm({ ...form, user: e.target.value })} placeholder="notifications@yourcompany.com" required />
               </div>
               <div className="form-group">
                 <label className="form-label">Google App Password (16 chars) <span className="req">*</span></label>
-                <input className="form-control" type="password" value={form.pass} onChange={e => setForm({...form, pass: e.target.value})} placeholder="App password from Google Security" required />
+                <input className="form-control" type="password" value={form.pass} onChange={e => setForm({ ...form, pass: e.target.value })} placeholder="App password from Google Security" required />
               </div>
               <div className="form-group full-width">
                 <label className="form-label">Sender From Header</label>
-                <input className="form-control" value={form.from} onChange={e => setForm({...form, from: e.target.value})} placeholder='"OpsVision VAMS" <notifications@yourcompany.com>' />
+                <input className="form-control" value={form.from} onChange={e => setForm({ ...form, from: e.target.value })} placeholder='"OpsVision VAMS" <notifications@yourcompany.com>' />
               </div>
               <div className="form-group full-width" style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                 <button type="submit" className="btn-primary" style={{ flex: 1 }}>Save Settings</button>
@@ -501,7 +502,7 @@ function Shell({ user, setUser, logout }) {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.3);
-    } catch(e) {}
+    } catch (e) { }
   };
 
   // PWA beforeinstallprompt listener
@@ -531,7 +532,7 @@ function Shell({ user, setUser, logout }) {
         lastNotifCountRef.current = unread;
         setUnreadCount(unread);
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const refreshPending = () => {
@@ -557,7 +558,7 @@ function Shell({ user, setUser, logout }) {
     try {
       await api('/notifications/read-all', { method: 'PUT' });
       fetchNotifications();
-    } catch(e) {}
+    } catch (e) { }
   };
 
   const viewPass = async (visitId) => {
@@ -676,35 +677,41 @@ function Shell({ user, setUser, logout }) {
               </button>
 
               {showNotifDropdown && (
-                <div className="notification-dropdown">
-                  <div className="notification-header">
-                    <h4>Notifications ({unreadCount} new)</h4>
-                    {unreadCount > 0 && (
-                      <button className="btn-secondary" style={{ padding: '2px 8px', fontSize: '11px' }} onClick={markAllNotifsRead}>
-                        Mark all read
-                      </button>
-                    )}
-                  </div>
-                  <div className="notification-list">
-                    {notifications.length === 0 ? (
-                      <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
-                        No notifications yet.
-                      </div>
-                    ) : (
-                      notifications.map(n => (
-                        <div key={n.id} className={`notification-item ${!n.read ? 'unread' : ''}`} onClick={() => {
-                          if (n.type === 'VISITOR_REGISTERED') setTab('approvals');
-                          else if (n.type === 'VISITOR_ENTRY') setTab('visitors');
-                          setShowNotifDropdown(false);
-                        }}>
-                          <span className="notif-title">{n.title}</span>
-                          <span className="notif-msg">{n.message}</span>
-                          <span className="notif-time">{new Date(n.created_at).toLocaleTimeString()}</span>
+                <>
+                  <div
+                    style={{ position: 'fixed', inset: 0, zIndex: 1050, background: 'transparent' }}
+                    onClick={() => setShowNotifDropdown(false)}
+                  />
+                  <div className="notification-dropdown">
+                    <div className="notification-header">
+                      <h4>Notifications ({unreadCount} new)</h4>
+                      {unreadCount > 0 && (
+                        <button className="btn-secondary" style={{ padding: '2px 8px', fontSize: '11px' }} onClick={markAllNotifsRead}>
+                          Mark all read
+                        </button>
+                      )}
+                    </div>
+                    <div className="notification-list">
+                      {notifications.length === 0 ? (
+                        <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
+                          No notifications yet.
                         </div>
-                      ))
-                    )}
+                      ) : (
+                        notifications.map(n => (
+                          <div key={n.id} className={`notification-item ${!n.read ? 'unread' : ''}`} onClick={() => {
+                            if (n.type === 'VISITOR_REGISTERED') setTab('approvals');
+                            else if (n.type === 'VISITOR_ENTRY') setTab('visitors');
+                            setShowNotifDropdown(false);
+                          }}>
+                            <span className="notif-title">{n.title}</span>
+                            <span className="notif-msg">{n.message}</span>
+                            <span className="notif-time">{new Date(n.created_at).toLocaleTimeString()}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
 
@@ -1075,7 +1082,6 @@ function Register({ setTab, viewPass }) {
         <h3 className="panel-title">
           <Icons.Register /> Register New Visitor
         </h3>
-        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>* Required information</span>
       </div>
       <div className="panel-body">
         {msg && (
@@ -1345,8 +1351,8 @@ function Visitors({ user, viewPass }) {
   useEffect(load, [statusFilter]);
 
   useEffect(() => {
-    api('/hosts').then(setHosts).catch(() => {});
-    api('/master/purposes').then(setPurposes).catch(() => {});
+    api('/hosts').then(setHosts).catch(() => { });
+    api('/master/purposes').then(setPurposes).catch(() => { });
   }, []);
 
   const canGate = user && ['GUARD', 'RECEPTION', 'ADMIN'].includes(user.role);
@@ -1401,11 +1407,13 @@ function Visitors({ user, viewPass }) {
     if (new Date(editForm.expected_checkout) <= new Date(editForm.expected_checkin)) { setEditMsg('Check-out time must be later than check-in time'); return; }
     setBusyId(editRow.visit_id); setEditMsg(''); setErr('');
     try {
-      await api(`/visitors/${editRow.id}`, { method: 'PUT', body: JSON.stringify({
-        name: editForm.name, mobile: editForm.mobile, email: editForm.email, company: editForm.company,
-        purpose: editForm.purpose, host_id: editForm.host_id, department: editForm.department, vehicle: editForm.vehicle,
-        expected_checkin: editForm.expected_checkin, expected_checkout: editForm.expected_checkout
-      }) });
+      await api(`/visitors/${editRow.id}`, {
+        method: 'PUT', body: JSON.stringify({
+          name: editForm.name, mobile: editForm.mobile, email: editForm.email, company: editForm.company,
+          purpose: editForm.purpose, host_id: editForm.host_id, department: editForm.department, vehicle: editForm.vehicle,
+          expected_checkin: editForm.expected_checkin, expected_checkout: editForm.expected_checkout
+        })
+      });
       setEditRow(null);
       load();
     } catch (e) { setEditMsg('Error: ' + e.message); }
@@ -1438,7 +1446,7 @@ function Visitors({ user, viewPass }) {
           <button className="btn-primary" onClick={load}>Search</button>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           {['', 'INSIDE', 'APPROVED', 'PENDING_APPROVAL', 'CLOSED'].map(s => (
             <button
               key={s}
@@ -2117,7 +2125,7 @@ function Reports() {
 
       {/* ---- Charts Tab ---- */}
       {activeTab === 'charts' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
           {/* Status Distribution Pie Chart */}
           <div className="panel">
             <div className="panel-header">
@@ -2305,8 +2313,8 @@ function MasterData() {
   const toBody = () => isHost
     ? { name: form.name, department: form.department, active: form.active }
     : isDept
-    ? { name: form.name, code: form.code, description: form.description, active: form.active }
-    : { name: form.name, description: form.description, active: form.active };
+      ? { name: form.name, code: form.code, description: form.description, active: form.active }
+      : { name: form.name, description: form.description, active: form.active };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -2354,7 +2362,7 @@ function MasterData() {
         <h3 className="panel-title">
           <Icons.MasterData /> Master Data Management
         </h3>
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
           <button className={`nav-item ${tab === 'departments' ? 'active' : ''}`} style={{ height: '32px', padding: '0 12px', fontSize: '13px' }} onClick={() => setTab('departments')}>Departments</button>
           <button className={`nav-item ${tab === 'purposes' ? 'active' : ''}`} style={{ height: '32px', padding: '0 12px', fontSize: '13px' }} onClick={() => setTab('purposes')}>Visit Purposes</button>
           <button className={`nav-item ${tab === 'hosts' ? 'active' : ''}`} style={{ height: '32px', padding: '0 12px', fontSize: '13px' }} onClick={() => setTab('hosts')}>People to Meet (Hosts)</button>
